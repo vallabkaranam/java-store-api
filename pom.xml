@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>23</java.version>
+        <lombok.version>1.18.46</lombok.version>
     </properties>
     <dependencies>
         <dependency>
@@ -64,7 +65,8 @@
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
-            <scope>annotationProcessor</scope>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -73,13 +75,27 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <artifactId>lombok</artifactId>
+                            <groupId>org.projectlombok</groupId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>10.15.0</version>
                 <configuration>
                     <url>jdbc:mysql://localhost:3306/store_api?createDatabaseIfNotExist=true</url>
                     <user>root</user>
-                    <password>MyPassword!</password>
+                    <password></password>
                     <cleanDisabled>false</cleanDisabled>
                 </configuration>
             </plugin>
