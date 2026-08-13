@@ -10,6 +10,9 @@ import com.vallab.store.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import com.vallab.store.mappers.UserMapper;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Sort;
+import java.util.Set;
 
 
 @RestController
@@ -20,8 +23,12 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping
-    public List<UserDto> getAllUsers() {    
-        return userRepository.findAll()
+    public List<UserDto> getAllUsers(@RequestParam(required = false, defaultValue = "", name="sort") String sort) {
+        if (!Set.of("name", "email").contains(sort)) {
+            sort = "name";
+        }
+
+        return userRepository.findAll(Sort.by(sort))
             .stream()
             .map(userMapper::toDto)
             .toList();
