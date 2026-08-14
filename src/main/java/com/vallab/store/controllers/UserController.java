@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Sort;
 import java.util.Set;
 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import com.vallab.store.dtos.RegisterUserRequest;
+import org.springframework.web.util.UriComponentsBuilder;
+
 
 @RestController
 @AllArgsConstructor
@@ -42,5 +47,17 @@ public class UserController {
         }
         
             return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(
+        @RequestBody RegisterUserRequest request,
+        UriComponentsBuilder uriBuilder) {
+        var user = userMapper.toEntity(request);
+        userRepository.save(user);
+
+        var userDto = userMapper.toDto(user);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(userDto);
     }
 }
