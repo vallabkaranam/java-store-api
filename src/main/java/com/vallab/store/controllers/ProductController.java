@@ -26,7 +26,8 @@ public class ProductController {
         List<Product> products;
         
         if (categoryId == null) {
-            products = productRepository.findAll();
+            products = productRepository.findAllWithCategory();
+            // products = productRepository.findAll();
         } else {
             products = productRepository.findByCategoryId(categoryId);
         }
