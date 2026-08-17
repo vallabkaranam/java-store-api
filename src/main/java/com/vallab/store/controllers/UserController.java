@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.vallab.store.dtos.RegisterUserRequest;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.vallab.store.dtos.UpdateUserRequest;
+import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
@@ -59,5 +61,20 @@ public class UserController {
         var userDto = userMapper.toDto(user);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
         return ResponseEntity.created(uri).body(userDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+        @PathVariable(name = "id") Long id, 
+        @RequestBody UpdateUserRequest request) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        userMapper.update(request, user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }
