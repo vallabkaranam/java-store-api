@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import com.vallab.store.dtos.ChangePasswordRequest;
 import org.springframework.http.HttpStatus;
-
+import jakarta.validation.Valid;
 
 @RestController
 @AllArgsConstructor
@@ -56,7 +56,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(
-        @RequestBody RegisterUserRequest request,
+        @Valid @RequestBody RegisterUserRequest request,
         UriComponentsBuilder uriBuilder) {
         var user = userMapper.toEntity(request);
         userRepository.save(user);
