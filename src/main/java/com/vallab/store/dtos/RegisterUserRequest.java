@@ -4,6 +4,7 @@ import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Email;
+import com.vallab.store.validation.Lowercase;
 
 @Data
 public class RegisterUserRequest {
@@ -13,6 +14,7 @@ public class RegisterUserRequest {
     
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email address")
+    @Lowercase(message = "Email must be lowercase")
     private String email;
     
     @NotBlank(message = "Password is required")
