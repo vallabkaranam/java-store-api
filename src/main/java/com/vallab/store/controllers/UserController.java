@@ -17,6 +17,7 @@ import java.util.Set;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.vallab.store.dtos.RegisterUserRequest;
+import com.vallab.store.entities.Role;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.vallab.store.dtos.UpdateUserRequest;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -79,6 +80,7 @@ public class UserController {
 
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
