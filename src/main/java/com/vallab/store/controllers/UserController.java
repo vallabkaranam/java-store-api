@@ -26,15 +26,23 @@ import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
+@Tag(name = "Users")
 public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @GetMapping
-    public List<UserDto> getAllUsers(@RequestParam(required = false, defaultValue = "", name="sort") String sort) {
+    @Operation(summary = "Get all users")
+    public List<UserDto> getAllUsers(
+        @Parameter(description = "The field to sort by. Allowed values: name, email")
+        @RequestParam(required = false, defaultValue = "", name="sort") String sort) {
         if (!Set.of("name", "email").contains(sort)) {
             sort = "name";
         }
@@ -46,7 +54,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+    @Operation(summary = "Get a user by ID")
+    public ResponseEntity<UserDto> getUser(
+        @Parameter(description = "The ID of the user") @PathVariable Long id) {
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -56,9 +66,11 @@ public class UserController {
     }
 
     @PostMapping
+    @Operation(summary = "Register a new user")
     public ResponseEntity<?> registerUser(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "The user registration details")
         @Valid @RequestBody RegisterUserRequest request,
-        UriComponentsBuilder uriBuilder) {
+        @Parameter(hidden = true) UriComponentsBuilder uriBuilder) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body(Map.of("email", "Email is already registered."));
         }
@@ -72,8 +84,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a user")
     public ResponseEntity<UserDto> updateUser(
-        @PathVariable(name = "id") Long id, 
+        @Parameter(description = "The ID of the user") @PathVariable(name = "id") Long id,
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "The updated user details")
         @RequestBody UpdateUserRequest request) {
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
@@ -87,7 +101,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    @Operation(summary = "Delete a user")
+    public ResponseEntity<Void> deleteUser(
+        @Parameter(description = "The ID of the user") @PathVariable Long id) {
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -98,8 +114,10 @@ public class UserController {
     }
 
     @PostMapping("/{id}/change-password")
+    @Operation(summary = "Change a user's password")
     public ResponseEntity<Void> changePassword(
-        @PathVariable(name = "id") Long id, 
+        @Parameter(description = "The ID of the user") @PathVariable(name = "id") Long id,
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "The current and new password")
         @RequestBody ChangePasswordRequest request) {
         var user = userRepository.findById(id).orElse(null);
 

@@ -5,6 +5,9 @@ import com.vallab.store.entities.Product;
 import com.vallab.store.mappers.ProductMapper;
 import com.vallab.store.repositories.CategoryRepository;
 import com.vallab.store.repositories.ProductRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,13 +26,17 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/products")
+@Tag(name = "Products")
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final CategoryRepository categoryRepository;
 
     @GetMapping
-    public List<ProductDto> getAllProducts(@RequestParam(required = false, name = "categoryId") Byte categoryId) {
+    @Operation(summary = "Get all products")
+    public List<ProductDto> getAllProducts(
+        @Parameter(description = "Optional category ID to filter products")
+        @RequestParam(required = false, name = "categoryId") Byte categoryId) {
         List<Product> products;
 
         if (categoryId == null) {
@@ -45,7 +52,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable Long id) {
+    @Operation(summary = "Get a product by ID")
+    public ResponseEntity<ProductDto> getProduct(
+        @Parameter(description = "The ID of the product") @PathVariable Long id) {
         var product = productRepository.findById(id).orElse(null);
         if (product == null) {
             return ResponseEntity.notFound().build();
@@ -54,9 +63,11 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new product")
     public ResponseEntity<ProductDto> createProduct(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "The product details")
         @RequestBody ProductDto productDto,
-        UriComponentsBuilder uriBuilder) {
+        @Parameter(hidden = true) UriComponentsBuilder uriBuilder) {
 
         var category = categoryRepository.findById(productDto.getCategoryId()).orElse(null);
         if (category == null) {
@@ -73,8 +84,10 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a product")
     public ResponseEntity<ProductDto> updateProduct(
-        @PathVariable(name = "id") Long id,
+        @Parameter(description = "The ID of the product") @PathVariable(name = "id") Long id,
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "The updated product details")
         @RequestBody ProductDto productDto) {
         var category = categoryRepository.findById(productDto.getCategoryId()).orElse(null);
         if (category == null) {
@@ -95,7 +108,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    @Operation(summary = "Delete a product")
+    public ResponseEntity<Void> deleteProduct(
+        @Parameter(description = "The ID of the product") @PathVariable Long id) {
         var product = productRepository.findById(id).orElse(null);
         if (product == null) {
             return ResponseEntity.notFound().build();
