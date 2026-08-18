@@ -1,5 +1,7 @@
 package com.vallab.store.entities;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,4 +26,8 @@ public class CartItem {
 
     @Column(name = "quantity")
     private Integer quantity;
+
+    public BigDecimal getTotalPrice() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    }
 }
