@@ -28,15 +28,15 @@ public class Cart {
 
     public BigDecimal getTotalPrice() {
         return items.stream()
-            .map(CartItem::getTotalPrice)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public CartItem getItem(Long productId) {
         return items.stream()
-            .filter(item -> item.getProduct().getId().equals(productId))
-            .findFirst()
-            .orElse(null);
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
     }
 
     public CartItem addItem(Product product) {
@@ -50,7 +50,6 @@ public class Cart {
             cartItem.setCart(this);
             items.add(cartItem);
         }
-
         return cartItem;
     }
 

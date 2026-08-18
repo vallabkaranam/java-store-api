@@ -1,8 +1,8 @@
 package com.vallab.store.dtos;
 
-import java.math.BigDecimal;
-
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class CartItemDto {
@@ -10,4 +10,3 @@ public class CartItemDto {
     private int quantity;
     private BigDecimal totalPrice;
 }
-
