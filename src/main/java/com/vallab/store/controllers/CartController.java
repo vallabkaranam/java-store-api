@@ -4,7 +4,6 @@ import com.vallab.store.dtos.AddItemToCartRequest;
 import com.vallab.store.dtos.CartDto;
 import com.vallab.store.dtos.CartItemDto;
 import com.vallab.store.entities.Cart;
-import com.vallab.store.entities.CartItem;
 import com.vallab.store.mappers.CartMapper;
 import com.vallab.store.repositories.CartRepository;
 import com.vallab.store.repositories.ProductRepository;
@@ -55,20 +54,7 @@ public class CartController {
             return ResponseEntity.badRequest().build();
         }
 
-        var cartItem = cart.getItems().stream()
-            .filter(item -> item.getProduct().getId().equals(product.getId()))
-            .findFirst()
-            .orElse(null);
-
-        if (cartItem != null) {
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
-        } else {
-            cartItem = new CartItem();
-            cartItem.setProduct(product);
-            cartItem.setQuantity(1);
-            cartItem.setCart(cart);
-            cart.getItems().add(cartItem);
-        }
+        var cartItem = cart.addItem(product);
 
         cartRepository.save(cart);
 
