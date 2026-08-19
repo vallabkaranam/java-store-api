@@ -30,6 +30,7 @@
         <java.version>17</java.version>
         <lombok.version>1.18.46</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
+        <sentry.version>8.53.0</sentry.version>
     </properties>
     <dependencies>
         <dependency>
@@ -126,6 +127,11 @@
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
             <version>29.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
+            <version>${sentry.version}</version>
         </dependency>
 
     </dependencies>
