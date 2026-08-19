@@ -33,10 +33,15 @@ public class CheckoutController {
     }
 
     @ExceptionHandler(PaymentException.class)
-    public ResponseEntity<?> handlePaymentException() {
+    public ResponseEntity<?> handlePaymentException(PaymentException exception) {
+        var message = exception.getMessage();
+        if (message == null || message.isBlank()) {
+            message = "Error processing payment";
+        }
+
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorDto("Error creating a checkout session"));
+                .body(new ErrorDto(message));
     }
 
 

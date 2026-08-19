@@ -3,6 +3,7 @@ package com.vallab.store.payments;
 import com.vallab.store.orders.Order;
 import com.vallab.store.orders.OrderItem;
 import com.vallab.store.orders.PaymentStatus;
+import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -75,11 +76,23 @@ public class StripePaymentGateway implements PaymentGateway {
     }
 
     private Long extractOrderId(Event event) {
-        var stripeObject = event.getDataObjectDeserializer().getObject().orElseThrow(
-            () -> new PaymentException("Could not deserialize Stripe event. Check the SDK and API version.")
-        );
+        var deserializer = event.getDataObjectDeserializer();
+        var stripeObject = deserializer.getObject().orElseGet(() -> {
+            try {
+                return deserializer.deserializeUnsafe();
+            } catch (EventDataObjectDeserializationException ex) {
+                throw new PaymentException("Could not deserialize Stripe event. Check the SDK and API version.");
+            }
+        });
+
         var paymentIntent = (PaymentIntent) stripeObject;
-        return Long.valueOf(paymentIntent.getMetadata().get("order_id"));
+        var orderId = paymentIntent.getMetadata().get("order_id");
+
+        if (orderId == null) {
+            throw new PaymentException("Missing order_id in Stripe payment metadata.");
+        }
+
+        return Long.valueOf(orderId);
     }
 
     private SessionCreateParams.LineItem createLineItem(OrderItem item) {
