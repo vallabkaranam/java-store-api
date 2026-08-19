@@ -2,7 +2,7 @@
 
 A production-deployed Spring Boot REST API for a grocery store backend. The API models a realistic ecommerce flow: browse products, create a cart, authenticate users, check out with Stripe, receive payment webhooks, and view order history.
 
-This project is intentionally built around backend patterns used in industry: stateless JWT authentication, role-based authorization, feature-oriented package structure, database migrations, external payment integration, environment-based configuration, DTO mapping, and transactional service-layer workflows.
+This project is intentionally built around backend patterns used in industry: stateless JWT authentication, role-based authorization, feature-oriented package structure, database migrations, external payment integration, environment-based configuration, DTO mapping, transactional service-layer workflows, and production error monitoring.
 
 ## Live API
 
@@ -35,6 +35,7 @@ This project is intentionally built around backend patterns used in industry: st
 - **MySQL + Spring Data JPA** for persistence, relationships, repositories, and domain entities.
 - **DTO boundaries with MapStruct** to avoid leaking persistence entities directly through API responses.
 - **Environment-specific configuration** with Spring profiles and externalized variables for local development and production deployment.
+- **Production observability** with Sentry error monitoring, environment tagging, and verified exception capture from the deployed Railway service.
 - **OpenAPI/Swagger documentation** generated through `springdoc-openapi`.
 
 ## Tech Stack
@@ -49,6 +50,7 @@ This project is intentionally built around backend patterns used in industry: st
 | Migrations | Flyway |
 | Payments | Stripe Checkout, Stripe Webhooks |
 | Mapping | MapStruct |
+| Observability | Sentry |
 | Deployment | Railway |
 | Build | Maven |
 
@@ -176,6 +178,9 @@ Set:
 JWT_SECRET=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET_KEY=
+SENTRY_DSN=
+SENTRY_ENVIRONMENT=dev
+SENTRY_TRACES_SAMPLE_RATE=0.0
 ```
 
 Start MySQL, then run:
@@ -205,6 +210,9 @@ SPRING_DATASOURCE_PASSWORD=
 JWT_SECRET=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET_KEY=
+SENTRY_DSN=
+SENTRY_ENVIRONMENT=production
+SENTRY_TRACES_SAMPLE_RATE=0.0
 ```
 
 For Railway MySQL, the datasource URL should be a JDBC URL, for example:
