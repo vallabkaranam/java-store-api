@@ -3,6 +3,7 @@ package com.vallab.store.controllers;
 import com.vallab.store.dtos.AddItemToCartRequest;
 import com.vallab.store.dtos.CartDto;
 import com.vallab.store.dtos.CartItemDto;
+import com.vallab.store.dtos.ErrorDto;
 import com.vallab.store.dtos.UpdateCartItemRequest;
 import com.vallab.store.exceptions.CartNotFoundException;
 import com.vallab.store.exceptions.ProductNotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -90,12 +90,12 @@ public class CartController {
     }
 
     @ExceptionHandler(CartNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCartNotFound() {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Cart not found."));
+    public ResponseEntity<ErrorDto> handleCartNotFound() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto("Cart not found."));
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductNotFound() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Product not found."));
+    public ResponseEntity<ErrorDto> handleProductNotFound() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto("Product not found."));
     }
 }

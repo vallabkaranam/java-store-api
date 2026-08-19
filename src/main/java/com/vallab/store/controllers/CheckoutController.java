@@ -2,6 +2,7 @@ package com.vallab.store.controllers;
 
 import com.vallab.store.dtos.CheckoutRequest;
 import com.vallab.store.dtos.CheckoutResponse;
+import com.vallab.store.dtos.ErrorDto;
 import com.vallab.store.entities.Order;
 import com.vallab.store.entities.OrderItem;
 import com.vallab.store.entities.OrderStatus;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -35,13 +34,13 @@ public class CheckoutController {
         var cart = cartRepository.getCartWithItems(request.getCartId()).orElse(null);
         if (cart == null) {
             return ResponseEntity.badRequest().body(
-                Map.of("error", "Cart not found")
+                new ErrorDto("Cart not found")
             );
         }
 
         if (cart.getItems().isEmpty()) {
             return ResponseEntity.badRequest().body(
-                Map.of("error", "Cart is empty")
+                new ErrorDto("Cart is empty")
             );
         }
 
