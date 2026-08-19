@@ -4,8 +4,6 @@ import com.vallab.store.dtos.CheckoutRequest;
 import com.vallab.store.dtos.CheckoutResponse;
 import com.vallab.store.dtos.ErrorDto;
 import com.vallab.store.entities.Order;
-import com.vallab.store.entities.OrderItem;
-import com.vallab.store.entities.OrderStatus;
 import com.vallab.store.repositories.CartRepository;
 import com.vallab.store.repositories.OrderRepository;
 import com.vallab.store.services.AuthService;
@@ -44,20 +42,7 @@ public class CheckoutController {
             );
         }
 
-        var order = new Order();
-        order.setTotalPrice(cart.getTotalPrice());
-        order.setStatus(OrderStatus.PENDING);
-        order.setCustomer(authService.getCurrentUser());
-
-        cart.getItems().forEach(item -> {
-            var orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(item.getProduct());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setTotalPrice(item.getTotalPrice());
-            orderItem.setUnitPrice(item.getProduct().getPrice());
-            order.getItems().add(orderItem);
-        });
+        var order = Order.fromCart(cart, authService.getCurrentUser());
 
         orderRepository.save(order);
 
