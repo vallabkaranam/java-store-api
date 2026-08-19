@@ -6,6 +6,7 @@ import com.vallab.store.dtos.ErrorDto;
 import com.vallab.store.exceptions.CartEmptyException;
 import com.vallab.store.exceptions.CartNotFoundException;
 import com.vallab.store.services.CheckoutService;
+import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CheckoutController {
     private final CheckoutService checkoutService;
 
     @PostMapping
-    public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request) {
+    public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request) throws StripeException {
         return checkoutService.checkout(request);
     }
 
