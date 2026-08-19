@@ -91,21 +91,24 @@ DELETE /products/{id}
 GET    /admin/hello
 ```
 
-## Example Checkout Flow
+## End-to-End User Flow
 
-1. Browse products:
+The API supports a common ecommerce flow: customers can browse products and build a cart before creating an account. Authentication is required when checking out and viewing orders.
+
+1. Browse the grocery catalog without logging in:
 
 ```http
 GET /products
+GET /products/{id}
 ```
 
-2. Create a cart:
+2. Create a guest cart:
 
 ```http
 POST /carts
 ```
 
-3. Add a product to the cart:
+3. Add products to the cart:
 
 ```http
 POST /carts/{cartId}/items
@@ -116,14 +119,21 @@ Content-Type: application/json
 }
 ```
 
-4. Register and log in:
+Cart items can also be updated or removed:
+
+```http
+PUT    /carts/{cartId}/items/{productId}
+DELETE /carts/{cartId}/items/{productId}
+```
+
+4. Register and log in before checkout:
 
 ```http
 POST /users
 POST /auth/login
 ```
 
-5. Check out:
+5. Check out with the authenticated user:
 
 ```http
 POST /checkout
@@ -135,15 +145,33 @@ Content-Type: application/json
 }
 ```
 
+The response includes the order ID and Stripe Checkout URL:
+
+```json
+{
+  "orderId": 1,
+  "checkoutUrl": "https://checkout.stripe.com/..."
+}
+```
+
 6. Open the returned Stripe Checkout URL and complete payment.
 
-7. Stripe calls the webhook:
+7. Stripe calls the webhook to update the order status:
 
 ```http
 POST /checkout/webhook
 ```
 
-8. The order status is updated from pending to paid or failed.
+This endpoint is public because Stripe calls it directly, but webhook signatures are verified before payment events are trusted.
+
+8. View order history or check a specific order status:
+
+```http
+GET /orders
+GET /orders/{orderId}
+```
+
+Orders include a payment status such as `PENDING`, `PAID`, `FAILED`, or `CANCELED`.
 
 ## Database
 
