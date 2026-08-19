@@ -54,6 +54,11 @@ public class AuthController {
         return ResponseEntity.ok(userDto);
     }
 
+    @GetMapping("/sentry-test")
+    public void sentryTest() {
+        throw new IllegalStateException("Sentry production verification test");
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Void> handleBadCredentialsException() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
